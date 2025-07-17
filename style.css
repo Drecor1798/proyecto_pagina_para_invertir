@@ -1,0 +1,22 @@
+.grid {
+    display: flex;
+    height: 100vh;
+    background-image: radial-gradient(circle, #f2d1d4, #f3abb0, #ef858a, #e65c63, #d9283b);
+}
+
+#contenido{
+    width: 50%;
+    text-align: center;
+    align-items: center;
+    float: left;
+}
+
+#saludo{
+    width: 50%;
+    text-align: center;
+    align-items: center;
+    float: left;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
