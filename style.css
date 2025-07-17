@@ -20,3 +20,13 @@
     justify-content: center;
     align-items: center;
 }
+
+body{
+    background-image: radial-gradient(circle, #f2d1d4, #f3abb0, #ef858a, #e65c63, #d9283b);
+    text-align: center;
+}
+
+.card{
+    background-image: radial-gradient(circle, #b3cfb0, #abf3d9, #85dbef, #e6c45c, #d9283b);
+    text-align: center;
+}
