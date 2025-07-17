@@ -34,7 +34,6 @@ ingreso.onclick = () => {
         const numero_nuevo = parseInt(document.getElementById("numero_nuevo").value) || 0;
         const centavo_nuevo = parseInt(document.getElementById("centavo_nuevo").value) || 0;
 
-        // Verificamos que los centavos no sean mayores de 99
         if (centavo_nuevo >= 100) {
             alert("No puedes ingresar más de 99 centavos.");
             return;
@@ -54,9 +53,9 @@ ingreso.onclick = () => {
         usuario.ingrso_inicial = suma_numero;
         usuario.ingreso_centavos = suma_centavo;
 
-        localStorage.setItem("usuario_logueado", JSON.stringify(usuario));
+        localStorage.setItem('usuario_logueado', JSON.stringify(usuario));
 
-        actualizarVista(); // Actualiza lo que ve el usuario
+        actualizarVista();
     };
 };
 

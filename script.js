@@ -29,6 +29,8 @@ document.getElementById("enviar").onclick = () => {
     }
 };
 
+localStorage.setItem("usuario_logueado", JSON.stringify(usuario_logueado));
+
 document.getElementById("nuevo_usuario").onclick = () => {
     contenido.innerHTML = `
         <h2>Registro</h2>
