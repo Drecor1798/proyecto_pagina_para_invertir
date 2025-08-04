@@ -10,53 +10,51 @@
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
-    <div id="contenido1"></div>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="#">Mi Sitio</a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" id="home">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="ingreso">Ingreso</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="transferencia">Transferencia</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" id="datos">Informacion Personal</a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" id="historial">Historial</a>
-                </li>
-            </ul>
-        </div>
+    <div style="display: flex; align-items: center;">
+        <img src="/images/Drecor.png" alt="Drecor" width="100" height="100">
+        <div id="contenido1"></div>
     </div>
-</nav>
+
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#"><img src="/images/Drecor.png" alt="Drecor" width="40" height="40"></a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                <ul class="navbar-nav w-100 d-flex justify-content-between text-center">
+                    <li class="nav-item flex-fill">
+                        <a class="nav-link active" aria-current="page" id="home">Home</a>
+                    </li>
+                    <li class="nav-item flex-fill">
+                        <a class="nav-link" id="ingreso">Ingreso</a>
+                    </li>
+                    <li class="nav-item flex-fill">
+                        <a class="nav-link" id="transferencia">Transferencia</a>
+                    </li>
+                    <li class="nav-item flex-fill">
+                        <a class="nav-link" id="comprar_dolar">Comprar Dolar</a>
+                    </li>
+                    <li class="nav-item flex-fill">
+                        <a class="nav-link" id="vender_dolar">Vender Dolar</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
     <div id="contenido2">
         <h1>Ofertas</h1>
         <div class="card-group">
             <div class="card">
-                <img src="..." class="card-img-top" alt="...">
+                <img src="/images/paga por la app 2.png" class="card-img-top" alt="...">
                 <div class="card-body">
                     <h5 class="card-title">Cashback del 5% en supermercados</h5>
                     <p class="card-text">Recibe un 5% de cashback en tus compras en supermercados.</p>
-                    <p class="card-text"><small class="text-body-secondary">Last updated 3 mins ago</small></p>
                 </div>
             </div>
             <div class="card">
-                <img src="..." class="card-img-top" alt="...">
+                <img src="/images/Diseño sin título (1).png" class="card-img-top" alt="...">
                 <div class="card-body">
                     <h5 class="card-title">Card title</h5>
                     <p class="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
@@ -64,7 +62,7 @@
                 </div>
             </div>
             <div class="card">
-                <img src="..." class="card-img-top" alt="...">
+                <img src="/images/paga por la app.png" class="card-img-top" alt="...">
                 <div class="card-body">
                     <h5 class="card-title">Card title</h5>
                     <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
@@ -72,12 +70,29 @@
                 </div>
             </div>
         </div>
-        <button type="button" class="btn btn-dark" ><a href="/index.html">Cerrar sesión</a></button>
+        
+    </div>
+
+    <div id="menu_desplegable">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Opciones
+        </button>
+        <ul class="dropdown-menu">
+            <li><a class="dropdown-item" id="CBU">CBU</a></li>
+            <li><a class="dropdown-item" id="historial">Historial</a></li>
+            <li><a class="dropdown-item" id="datos">Datos Personales</a></li>
+        </ul>
     </div>
     
+    <div id="contenido3" class="p-3 border rounded shadow-sm mt-3" style="min-height: 300px;">
+        <h1 class="display-2">Puedes ver todos tus datos con el boton de Opciones</h1>
+    </div>
+
+    <button type="button" class="btn btn-dark" ><a href="/index.html">Cerrar sesión</a></button>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>AOS.init();</script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

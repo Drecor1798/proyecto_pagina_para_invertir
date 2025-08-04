@@ -1,258 +1,508 @@
-const contenido = document.getElementById("contenido1");
-const contenido2 = document.getElementById("contenido2");
-const ingreso = document.getElementById("ingreso");
-const transferencia = document.getElementById("transferencia");
-const datos = document.getElementById("datos");
-const home = document.getElementById("home");
-const historial = document.getElementById("historial"); 
-const usuario = JSON.parse(localStorage.getItem("usuario_logueado"));
+document.addEventListener("DOMContentLoaded", () => {
+    const contenido = document.getElementById("contenido1");
+    const contenido2 = document.getElementById("contenido2");
+    const contenido3 = document.getElementById('contenido3');
+    const ingreso = document.getElementById("ingreso");
+    const transferencia = document.getElementById("transferencia");
+    const datos = document.getElementById("datos");
+    const home = document.getElementById("home");
+    const historial = document.getElementById("historial");
+    const comprar_dolar = document.getElementById("comprar_dolar");
+    const vender_dolar = document.getElementById("vender_dolar");
 
 
-if (!usuario) {
-    alert("Debes iniciar sesión.");
-    location.href = "/index.html";
-} else {
-    contenido.innerHTML = `<h1>Bienvenido, ${usuario.nombre} ${usuario.apellido}</h1><br>
-    <figcaption class="blockquote-footer">
-        Dinero:
-    </figcaption>
-    <figure>
-    <blockquote class="blockquote">
-        <h1 class="display-2">${usuario.ingrso_inicial}.${usuario.ingreso_centavos} $</h1>
-    </blockquote>
-</figure>
-    `;
-}
-
-function mostrarMensaje(texto) {
-    const log = document.getElementById("mensaje-log");
-
-    const claveMensajes = `mensajes_log_${usuario.email}`;
-
-    let mensajes = JSON.parse(localStorage.getItem(claveMensajes)) || [];
-
-    const fecha = new Date().toLocaleTimeString();
-    const mensajeCompleto = `[${fecha}] ${texto}`;
-    mensajes.push(mensajeCompleto);
-
-    localStorage.setItem(claveMensajes, JSON.stringify(mensajes));
-
-    if (log) {
-        log.innerHTML = mensajes.map(msg => `<div class="mensaje">${msg}</div>`).join("");
-        log.scrollTop = log.scrollHeight;
-    }
-}
-
-home.onclick = () => {
-    location.reload(); 
-}
-
-ingreso.onclick = () => {
-    contenido2.innerHTML = `
-    <div class="nuevo-ingreso-container">
-        <h2>Nuevo Ingreso</h2>
-        <label for="numero_nuevo" class="label-monto">Monto:</label>
-        <div class="input-monto">
-            <input type="number" id="numero_nuevo" name="numero" min="0" max="100" step="1" placeholder="0">
-            <span class="punto">.</span>
-            <input type="number" id="centavo_nuevo" name="centavo" min="0" max="99" step="1" placeholder="00">
-            <span class="signo">$</span>
-        </div>
-        <div class="botones">
-            <button type="button" class="btn btn-dark" id="nuevo_ingreso">Ingresar</button>
-            <button type="button" class="btn btn-dark" id="atras">Atrás</button>
-        </div>
-    </div>
-    `;
-
-    document.getElementById("nuevo_ingreso").onclick = () => {
-        const numero_nuevo = parseInt(document.getElementById("numero_nuevo").value) || 0;
-        const centavo_nuevo = parseInt(document.getElementById("centavo_nuevo").value) || 0;
-
-        if (centavo_nuevo >= 100) {
-            alert("No puedes ingresar más de 99 centavos.");
-            return;
-        }
-
-        let numeroActual = parseInt(usuario.ingrso_inicial) || 0;
-        let centavoActual = parseInt(usuario.ingreso_centavos) || 0;
-
-        let suma_numero = numeroActual + numero_nuevo;
-        let suma_centavo = centavoActual + centavo_nuevo;
-
-        if (suma_centavo >= 100) {
-            suma_numero += 1;
-            suma_centavo -= 100;
-        }
-
-        usuario.ingrso_inicial = suma_numero;
-        usuario.ingreso_centavos = suma_centavo;
-
-        localStorage.setItem('usuario_logueado', JSON.stringify(usuario));
-
-        actualizarVista();
-        mostrarMensaje(`Ingresaste $${numero_nuevo}.${centavo_nuevo.toString().padStart(2, "0")}`);
-
-    };
-
-    document.getElementById("atras").onclick = () => {
-        location.reload(); 
-    };
-    
-};
-
-transferencia.onclick = () => {
-    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-    const destinatarios = usuarios.filter(u => u.email !== usuario.email);
-
-    if (destinatarios.length === 0) {
-        alert("No hay otros usuarios a quienes transferir.");
+    let usuario = JSON.parse(localStorage.getItem("usuario_logueado"));
+    if (!usuario) {
+        Swal.fire({
+            icon: "error",
+            title: "Este email ya está registrado",
+        });
+        location.href = "/index.html";
         return;
     }
 
+    const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
 
-    const opciones = destinatarios.map(u => `<option value="${u.email}">${u.nombre} ${u.apellido}</option>`).join('');
+    actualizarVista();
 
-    contenido2.innerHTML = `
-        <h3>Transferencia</h3>
-        <label>Monto a transferir:</label>
+    
 
+    function actualizarVista() {
+        contenido.innerHTML = `
+            <h1>Bienvenido/a, ${usuario.nombre}</h1><br>
+            <figcaption class="blockquote-footer">Dinero:</figcaption>
+            <figure>
+            <blockquote class="blockquote">
+                <h1 class="display-2">${usuario.ingrso_inicial}.${usuario.ingreso_centavos.toString().padStart(2, '0')} $</h1>
+            </blockquote>
+            </figure>
+            <div id="dolar">
+            <button type="button" class="btn btn-dark" id="ver_dolar">Billetera dólar</button>
+            </div>
+            `;
+            const dolar = document.getElementById("ver_dolar");
+            dolar.onclick = () => {
+                contenido.innerHTML = `
+                <h1>Bienvenido/a, ${usuario.nombre}</h1><br>
+                <figcaption class="blockquote-footer">Dinero en dólares:</figcaption>
+                <figure>
+                <blockquote class="blockquote">
+                    <h1 class="display-2">${usuario.ingrso_inicial_dolar || 0}.${(usuario.ingreso_centavos_dolar || 0).toString().padStart(2, '0')} USD</h1>
+                </blockquote>
+                </figure>
+                <div>
+                    <button type="button" class="btn btn-dark" id="volver">Billetera en pesos</button>
+                    </div>
+                `;
+                document.getElementById("volver").onclick = () => {
+                    actualizarVista();
+                };
+            };
+        }
+
+
+
+
+
+    function mostrarMensaje(texto) {
+        const log = document.getElementById("mensaje-log");
+        const clave = `mensajes_log_${usuario.email}`;
+        let mensajes = JSON.parse(localStorage.getItem(clave)) || [];
+
+        const ahora = new Date();
+        mensajes.push({
+            dia: ahora.toLocaleDateString(),
+            fecha: ahora.toLocaleTimeString(),
+            texto: texto
+        });
+
+        localStorage.setItem(clave, JSON.stringify(mensajes));
+
+        if (log) {
+            log.innerHTML = mensajes.map(msg => `
+                <div class="mensaje">
+                    <strong>${msg.fecha} ${msg.dia}</strong>: ${msg.texto}
+                </div>`).join("");
+        }
+    }
+
+    home.onclick = () => location.reload();
+
+    ingreso.onclick = () => {
+        contenido2.innerHTML = `
+            <h3>Nuevo Ingreso</h3>
+            <label>Monto:</label>
+            <div class="input-monto">
+                <input type="number" id="numero_nuevo" step="1" min="0" placeholder="0">
+                <span class="punto">.</span>
+                <input type="number" id="centavo_nuevo" min="0" max="99" placeholder="00">
+                <span class="signo">$</span>
+            </div>
+            <div class="botones">
+                <button class="btn btn-dark" id="nuevo_ingreso">Ingresar</button>
+                <button class="btn btn-dark" id="atras">Atrás</button>
+            </div>
+        `;
+
+        document.getElementById("nuevo_ingreso").onclick = () => {
+            const monto = parseInt(document.getElementById("numero_nuevo").value) || 0;
+            const centavos = parseInt(document.getElementById("centavo_nuevo").value) || 0;
+
+            if (centavos >= 100){
+                Swal.fire({
+                    icon: "error",
+                    title: "No pueden ingresar mas de 99 centavos",
+                });
+                return;
+            }
+
+            let total = (usuario.ingrso_inicial * 100 + usuario.ingreso_centavos) + (monto * 100 + centavos);
+            usuario.ingrso_inicial = Math.floor(total / 100);
+            usuario.ingreso_centavos = total % 100;
+
+            actualizarUsuario();
+            mostrarMensaje(`Ingresaste $${monto}.${centavos.toString().padStart(2, '0')}`);
+            
+            
+            Swal.fire({
+                icon: "success",
+                title: "Ingreso completado",
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                location.reload();
+            });
+
+
+        };
+
+        document.getElementById("atras").onclick = () => location.reload();
+    };
+
+    transferencia.onclick = () => {
+        const destinatarios = usuarios.filter(u => u.email !== usuario.email);
+        if (destinatarios.length === 0){
+            Swal.fire({
+                    icon: "error",
+                    title: "No hay otros usuarios",
+                });
+                return;
+        }
+
+        contenido2.innerHTML = `
+            <h3>Transferencia</h3>
+            <label>Monto:</label>
+            <div class="input-monto">
+                <input type="number" id="cantidad_transferida" step="1" min="0" placeholder="0">
+                <span class="punto">.</span>
+                <input type="number" id="centavo_transferido" min="0" max="99" placeholder="00">
+                <span class="signo">$</span>
+            </div>
+            <label>Nombre completo o CBU del destinatario:</label>
+            <input type="text" id="destinatario" placeholder="Ej. Juan Pérez o 12345678">
+            <br><br>
+            <button class="btn btn-dark" id="nueva_transferencia">Transferir</button>
+            <button class="btn btn-secondary" id="atras">Atrás</button>
+        `;
+
+        document.getElementById("nueva_transferencia").onclick = () => {
+            const monto = parseInt(document.getElementById("cantidad_transferida").value) || 0;
+            const centavos = parseInt(document.getElementById("centavo_transferido").value) || 0;
+            const inputValor = document.getElementById("destinatario").value.trim().toLowerCase();
+
+            if (!inputValor){
+                Swal.fire({
+                    icon: "error",
+                    title: "Ingrese nombre o CBU",
+                });
+                return;
+            } 
+            if (centavos >= 100 || monto < 0 || centavos < 0){
+                Swal.fire({
+                    icon: "error",
+                    title: "No pueden ingresar mas de 99 centavos",
+                });
+                return;
+            } 
+
+            const receptor = destinatarios.find(u => {
+                const fullName = `${u.nombre}`.toLowerCase();
+                const cbu = u.CBU ? String(u.CBU) : "";
+                return fullName.includes(inputValor) || cbu === inputValor;
+            });
+
+            if (!receptor){
+                Swal.fire({
+                    icon: "error",
+                    title: "Destinatario no encontrado",
+                });
+                return;
+            }
+
+            const totalTransferencia = monto * 100 + centavos;
+            let totalOrigen = usuario.ingrso_inicial * 100 + usuario.ingreso_centavos;
+            if (totalTransferencia > totalOrigen){
+                Swal.fire({
+                    icon: "error",
+                    title: "Fondos insuficientes",
+                });
+                return;
+            }
+
+            totalOrigen -= totalTransferencia;
+            usuario.ingrso_inicial = Math.floor(totalOrigen / 100);
+            usuario.ingreso_centavos = totalOrigen % 100;
+
+            let totalReceptor = (receptor.ingrso_inicial || 0) * 100 + (receptor.ingreso_centavos || 0);
+            totalReceptor += totalTransferencia;
+            receptor.ingrso_inicial = Math.floor(totalReceptor / 100);
+            receptor.ingreso_centavos = totalReceptor % 100;
+
+            actualizarUsuarios(receptor);
+
+            Swal.fire({
+                icon: "success",
+                title: "Transferencia realizada con exito",
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                location.reload();
+            });
+            mostrarMensaje(`Transferiste $${monto}.${centavos.toString().padStart(2, '0')} a ${receptor.nombre}`);
+            guardarMensajeReceptor(receptor.email, `Recibiste $${monto}.${centavos.toString().padStart(2, '0')} de ${usuario.nombre}`);
+            
+        };
+
+        document.getElementById("atras").onclick = () => location.reload();
+    };
+
+    comprar_dolar.onclick = () => {
+        contenido2.innerHTML = `
+        <h3>Compra de Dólares</h3>
         <div class="input-monto">
-            <input type="number" id="cantidad_transferida" name="numero" min="0" max="100" step="1" placeholder="0">
-            <span class="punto">.</span>
-            <input type="number" id="centavo_transferido" name="centavo" min="0" max="99" step="1" placeholder="00">
-            <span class="signo">$</span>
-        </div>
+            <input type="number" id="dolar_comprado" step="1" min="1" placeholder="0">
+            <span class="signo">USD</span>
+        </div><br>
+        <button class="btn btn-dark" id="compra">Comprar</button>
+        `;
+        document.getElementById("compra").onclick = () => {
+            const dolaresAComprar = parseInt(document.getElementById("dolar_comprado").value) || 0;
+            
+            if (dolaresAComprar < 1) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Debes ingresar al menos 1 dólar",
+                });
+                return;
+            }
+            const tasaCambio = 1354; 
+            const costoEnPesos = dolaresAComprar * tasaCambio;
+            let totalPesosCentavos = (usuario.ingrso_inicial || 0) * 100 + (usuario.ingreso_centavos || 0);
+            if (costoEnPesos * 100 > totalPesosCentavos) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Fondos insuficientes para esta compra",
+                });
+                return;
+            }
+            totalPesosCentavos -= costoEnPesos * 100;
+            usuario.ingrso_inicial = Math.floor(totalPesosCentavos / 100);
+            usuario.ingreso_centavos = totalPesosCentavos % 100;
+            
+            usuario.ingrso_inicial_dolar = (usuario.ingrso_inicial_dolar || 0) + dolaresAComprar;
+            usuario.ingreso_centavos_dolar = usuario.ingreso_centavos_dolar || 0;
+            
+            localStorage.setItem("usuario_logueado", JSON.stringify(usuario));
+            
+            const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+            const actualizados = usuarios.map(u => u.email === usuario.email ? usuario : u);
+            localStorage.setItem("usuarios", JSON.stringify(actualizados));
+            
 
-        <label>Seleccionar destinatario:</label>
-        <select id="persona_transferida">${opciones}</select><br><br>
+            
+            Swal.fire({
+                icon: "success",
+                title: "Transferencia realizada con exito",
+                text: `Compra exitosa. Compraste ${dolaresAComprar} USD.`,
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                location.reload();
+            }); 
+        };
+    };
 
-        <button class="btn btn-dark" id="nueva_transferencia">Transferir</button>
-        <button class="btn btn-secondary" id="atras">Atrás</button>
-    `;
+    vender_dolar.onclick = () => {
+        contenido2.innerHTML = `
+            <h3>Venta de Dólares</h3>
+            <div class="input-monto">
+                <input type="number" id="dolar_vendido" step="1" min="0" placeholder="0">
+                <span class="signo">.</span>
+                <input type="number" id="centavo_dolar_vendido" min="0" max="99" placeholder="00">
+                <span class="signo">USD</span>
+            </div>
+            <button class="btn btn-dark" id="venta">Vender</button>
+        `;
+            
+        document.getElementById("venta").onclick = () => {
+            const dolaresAVender = parseInt(document.getElementById("dolar_vendido").value) || 0;
+            const centavosAVender = parseInt(document.getElementById("centavo_dolar_vendido").value) || 0;
 
-    document.getElementById("nueva_transferencia").onclick = () => {
-        const monto = parseInt(document.getElementById("cantidad_transferida").value) || 0;
-        const centavos = parseInt(document.getElementById("centavo_transferido").value) || 0;
-        const email_destino = document.getElementById("persona_transferida").value;
+            if (centavosAVender > 99 || centavosAVender < 0) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Los centavos deben estar entre 0 y 99",
+                });
+                return;
+            }
+            
+            const totalVentaDolarCentavos = dolaresAVender * 100 + centavosAVender;
+            const totalUsuarioDolarCentavos = (usuario.ingrso_inicial_dolar || 0) * 100 + (usuario.ingreso_centavos_dolar || 0);
+            
+            if (totalVentaDolarCentavos > totalUsuarioDolarCentavos) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Fondos insuficientes para esta venta",
+                });
+                return;
+            }
+            
+            const tasaCambio = 1354;
+            const pesosAGanarCentavos = totalVentaDolarCentavos * tasaCambio;
+            
+            let totalPesosActualCentavos = (usuario.ingrso_inicial || 0) * 100 + (usuario.ingreso_centavos || 0);
+            totalPesosActualCentavos += pesosAGanarCentavos;
+            usuario.ingrso_inicial = Math.floor(totalPesosActualCentavos / 100);
+            usuario.ingreso_centavos = totalPesosActualCentavos % 100;
+            
+            const totalDolarRestanteCentavos = totalUsuarioDolarCentavos - totalVentaDolarCentavos;
+            usuario.ingrso_inicial_dolar = Math.floor(totalDolarRestanteCentavos / 100);
+            usuario.ingreso_centavos_dolar = totalDolarRestanteCentavos % 100;
+            
+            localStorage.setItem("usuario_logueado", JSON.stringify(usuario));
+            const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
+            const actualizados = usuarios.map(u => u.email === usuario.email ? usuario : u);
+            localStorage.setItem("usuarios", JSON.stringify(actualizados));
+            
 
-        if (centavos >= 100 || monto < 0 || centavos < 0) {
-            alert("Monto inválido.");
-            return;
+            
+            Swal.fire({
+                icon: "success",
+                title: "Transferencia realizada con exito",
+                text: `Venta exitosa. Recibiste $${(pesosAGanarCentavos / 100).toFixed(2)} pesos`,
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                location.reload();
+            }); 
+        };
+    };
+
+    CBU.onclick = () => {
+        contenido3.innerHTML = `<h1 class="display-1">Tu CBU es</h1>
+        <p class="display-1">${usuario.CBU}</p>`
+    }
+
+
+
+    datos.onclick = () => {
+        contenido3.innerHTML = `
+            <h3>Editar datos</h3>
+            <label>Nombre actual: ${usuario.nombre}</label><br>
+            <input type="text" id="ne" placeholder="Nuevo nombre" id="posible_nombre"><br><br>
+            <button class="btn btn-dark" id="editar_nombre">Guardar cambios</button>
+            <button class="btn btn-secondary" id="atras">Atrás</button>
+            <button class="btn btn-secondary" id="borrar_datos">Borrar cuenta</button>
+        `;
+
+        document.getElementById("editar_nombre").onclick = () => {
+            const nuevoNombre = document.getElementById("ne").value.trim();
+            if (!nuevoNombre){
+                Swal.fire({
+                    icon: "error",
+                    title: "El campo esta bacio",
+                });
+                return;
+            };
+
+            usuario.nombre = nuevoNombre;
+            actualizarUsuario();
+
+            Swal.fire({
+                icon: "success",
+                title: "Nombre cambiado",
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                location.reload(); 
+            });
+        };
+
+        document.getElementById("borrar_datos").onclick = () => {
+            Swal.fire({
+                title: "¿Seguro que deseas borrar tu cuenta?",
+                text: "Esta cuenta se borrara de la pagina",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, estoy seguro"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const restantes = usuarios.filter(u => u.email !== usuario.email);
+                    localStorage.setItem("usuarios", JSON.stringify(restantes));
+                    localStorage.removeItem(`mensajes_log_${usuario.email}`);
+                    localStorage.removeItem("usuario_logueado");
+                    Swal.fire({
+                        title: "Fue borrado",
+                        text: "Su cuenta fue borrada.",
+                        icon: "success"
+                    }).then(() => {
+                        location.href = "/index.html"; 
+                    });
+                }
+            });
+        };
+
+        document.getElementById("atras").onclick = () => location.reload();
+    };
+
+    historial.onclick = () => {
+        contenido3.innerHTML = `
+            <div id="mensaje-log" class="mensaje-log"></div>
+            <button type="button" class="btn btn-dark mt-3" id="borrar_historial">Borrar historial</button>
+        `;
+
+        const clave = `mensajes_log_${usuario.email}`;
+        const mensajes = JSON.parse(localStorage.getItem(clave)) || [];
+
+        const log = document.getElementById("mensaje-log");
+        if (mensajes.length === 0) {
+            log.innerHTML = `<p>No hay ningún movimiento</p>`;
+        } else {
+            let tablaHTML = `
+                <table class="table table-dark table-hover">
+                    <thead>
+                        <tr><th>Fecha</th><th>Hora</th><th>Movimiento</th></tr>
+                    </thead>
+                    <tbody>
+            ` + mensajes.map(msg => `
+                <tr>
+                    <td>${msg.dia}</td>
+                    <td>${msg.fecha}</td>
+                    <td>${msg.texto}</td>
+                </tr>
+            `).join("") + `</tbody></table>`;
+            log.innerHTML = tablaHTML;
         }
 
-        let totalOrigenPesos = parseInt(usuario.ingrso_inicial);
-        let totalOrigenCentavos = parseInt(usuario.ingreso_centavos);
+        document.getElementById("borrar_historial").onclick = () => {
+            Swal.fire({
+                title: "¿Esta seguro de borrar su historial?",
+                text: "Se borrara su historial",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "SI"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    localStorage.removeItem(clave);
+                    log.innerHTML = `<p>Historial eliminado.</p>`;
+                    Swal.fire({
+                        title: "Historial borrado",
+                        icon: "success"
+                    });
+                }
+            });
+        };
+    };
 
-        let totalOrigen = totalOrigenPesos * 100 + totalOrigenCentavos;
-        let totalTransferencia = monto * 100 + centavos;
+    function actualizarUsuario() {
+        const nuevosUsuarios = usuarios.map(u => u.email === usuario.email ? usuario : u);
+        localStorage.setItem("usuarios", JSON.stringify(nuevosUsuarios));
+        localStorage.setItem("usuario_logueado", JSON.stringify(usuario));
+    }
 
-        if (totalTransferencia > totalOrigen) {
-            alert("Fondos insuficientes.");
-            return;
-        }
-
-        totalOrigen -= totalTransferencia;
-        usuario.ingrso_inicial = Math.floor(totalOrigen / 100);
-        usuario.ingreso_centavos = totalOrigen % 100;
-
-        const receptor = usuarios.find(u => u.email === email_destino);
-        let totalReceptor = (parseInt(receptor.ingrso_inicial) || 0) * 100 + (parseInt(receptor.ingreso_centavos) || 0);
-        totalReceptor += totalTransferencia;
-        receptor.ingrso_inicial = Math.floor(totalReceptor / 100);
-        receptor.ingreso_centavos = totalReceptor % 100;
-
-        const nuevosUsuarios = usuarios.map(u => {
+    function actualizarUsuarios(receptor) {
+        const nuevos = usuarios.map(u => {
             if (u.email === usuario.email) return usuario;
             if (u.email === receptor.email) return receptor;
             return u;
         });
-
-        localStorage.setItem("usuarios", JSON.stringify(nuevosUsuarios));
+        localStorage.setItem("usuarios", JSON.stringify(nuevos));
         localStorage.setItem("usuario_logueado", JSON.stringify(usuario));
-
-        alert("Transferencia realizada con éxito.");
-        actualizarVista();
-        mostrarMensaje(`Transferiste $${monto}.${centavos.toString().padStart(2, '0')} a ${receptor.nombre} ${receptor.apellido}`);
-
-    };
-
-    document.getElementById("atras").onclick = () => {
-        location.reload();
-    };
-};
-
-datos.onclick = () => {
-    contenido2.innerHTML = `
-        <h3>Editar datos</h3>
-        <label>Nombre actual: ${usuario.nombre}</label><br>
-        <input type="text" id="ne" placeholder="Nuevo nombre"><br><br>
-        <label>Nombre actual: ${usuario.apellido}</label><br>
-        <input type="text" id="ap" placeholder="Nuevo apellido"><br><br>
-        <button class="btn btn-dark" id="editar_nombre">Guardar cambios</button>
-        <button class="btn btn-secondary" id="atras">Atrás</button>
-    `;
-
-    document.getElementById("editar_nombre").onclick = () => {
-        const nuevoNombre = document.getElementById("ne").value.trim();
-        const nuevoApellido = document.getElementById("ap").value.trim();
-
-        if (nuevoNombre === "" || nuevoApellido === "") {
-            alert("El nombre o apellido no puede estar vacío.");
-            return;
-        }
-
-        usuario.nombre = nuevoNombre;
-
-        usuario.apellido = nuevoApellido;
-
-        localStorage.setItem("usuario_logueado", JSON.stringify(usuario));
-
-        const usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
-        const nuevosUsuarios = usuarios.map(u => {
-            if (u.email === usuario.email) return usuario;
-            return u;
-        });
-        localStorage.setItem("usuarios", JSON.stringify(nuevosUsuarios));
-
-        alert("Nombre actualizado con éxito.");
-        actualizarVista();
-    };
-
-    document.getElementById("atras").onclick = () => {
-        location.reload();
-    };
-};
-
-
-function actualizarVista() {
-    contenido.innerHTML = `
-        <h1>Bienvenido, ${usuario.nombre} ${usuario.apellido}</h1><br>
-        <figcaption class="blockquote-footer">Dinero:</figcaption>
-        <figure>
-            <blockquote class="blockquote">
-                <h1 class="display-2">${usuario.ingrso_inicial}.${usuario.ingreso_centavos.toString().padStart(2, '0')} $</h1>
-            </blockquote>
-        </figure>
-    `;
-}
-
-
-
-
-historial.onclick = () => {
-    contenido2.innerHTML = `<div id="mensaje-log" class="mensaje-log"></div>`;
-
-    function cargarMensajesGuardados() {
-        const log = document.getElementById("mensaje-log");
-        const claveMensajes = `mensajes_log_${usuario.email}`;
-        const mensajes = JSON.parse(localStorage.getItem(claveMensajes)) || [];
-        
-        log.innerHTML = mensajes.map(msg => `<div class="mensaje">${msg}</div>`).join("");
     }
 
-    cargarMensajesGuardados();
-};
-
-
+    function guardarMensajeReceptor(email, texto) {
+        const clave = `mensajes_log_${email}`;
+        let mensajes = JSON.parse(localStorage.getItem(clave)) || [];
+        mensajes.push({
+            dia: new Date().toLocaleDateString(),
+            fecha: new Date().toLocaleTimeString(),
+            texto: texto
+        });
+        localStorage.setItem(clave, JSON.stringify(mensajes));
+    }
+});
 
