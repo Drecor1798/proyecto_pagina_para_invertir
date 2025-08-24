@@ -24,6 +24,7 @@ let usuarios = JSON.parse(localStorage.getItem("usuarios")) || [];
 Usuario.id = usuarios.length;
 
 const contenido = document.getElementById("contenido");
+const usuario_creado = document.getElementById("usuario_creado");
 
 document.getElementById("enviar").onclick = () => {
     const email = document.getElementById("email").value;
@@ -152,9 +153,43 @@ function obtenerUsuarios() {
 }
 
 
-obtenerUsuarios();
+obtenerUsuarios()
+
+function mostrarUsuarios() {
+    if (usuarios.length === 0) return;
+
+    let html = `
+        <div class="mt-4">
+            <h4>Usuarios registrados</h4>
+            <ul class="list-group">
+    `;
+
+    usuarios.forEach(u => {
+        html += `
+            <li class="list-group-item">
+                <strong>Nombre:</strong> ${u.nombre} <br>
+                <strong>Email:</strong> ${u.email} <br>
+                <strong>Contraseña:</strong> ${u.contrasena}
+            </li>
+        `;
+    });
+
+    html += `
+            </ul>
+        </div>
+        <button type="button" class="btn btn-dark" id="atras">Atrás</button>
+    `;
+
+    document.getElementById("usuario_creado").innerHTML = html;
+    document.getElementById("atras").onclick = () => {
+        location.reload(); 
+    };
+}
 
 
+document.getElementById("usuario_creado_boton").onclick = () => {
+    mostrarUsuarios();
+};
 
 
 
