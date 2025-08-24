@@ -62,28 +62,28 @@ document.getElementById("nuevo_usuario").onclick = () => {
     `;
 
     document.getElementById("crear").onclick = () => {
-        const nombre = document.getElementById("nombre").value.trim();
-        const email = document.getElementById("nuevo_email").value.trim();
-        const contrasena = document.getElementById("nuevo_contrasena").value.trim();
+        // const nombre = document.getElementById("nombre").value.trim();
+        // const email = document.getElementById("nuevo_email").value.trim();
+        // const contrasena = document.getElementById("nuevo_contrasena").value.trim();
         
-        if (!nombre || !email || !contrasena) {
-            Swal.fire({
-                icon: "warning",
-                title: "Todos los campos son obligatorios",
-            });
-            return;
-        }
-        if (usuarios.find(u => u.email === email)) {
-            Swal.fire({
-                icon: "error",
-                title: "Este email ya está registrado",
-            });
-            return;
-        }
+        // if (!nombre || !email || !contrasena) {
+        //     Swal.fire({
+        //         icon: "warning",
+        //         title: "Todos los campos son obligatorios",
+        //     });
+        //     return;
+        // }
+        // if (usuarios.find(u => u.email === email)) {
+        //     Swal.fire({
+        //         icon: "error",
+        //         title: "Este email ya está registrado",
+        //     });
+        //     return;
+        // }
         
-        const nuevoUsuario = new Usuario(nombre, email, contrasena);
-        usuarios.push(nuevoUsuario);
-        localStorage.setItem("usuarios", JSON.stringify(usuarios));
+        // const nuevoUsuario = new Usuario(nombre, email, contrasena);
+        // usuarios.push(nuevoUsuario);
+        // localStorage.setItem("usuarios", JSON.stringify(usuarios));
         
         Swal.fire({
             icon: "success",
@@ -104,26 +104,53 @@ document.getElementById("nuevo_usuario").onclick = () => {
 
 const URL = 'https://jsonplaceholder.typicode.com/users'
 
+function generarContrasenaSegura() {
+    const mayusculas = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const minusculas = 'abcdefghijklmnopqrstuvwxyz';
+    const numeros = '0123456789';
+    const simbolos = '!@#$%^&*()_+[]{}|;:,.<>?';
+
+    const obtenerAleatorio = str => str[Math.floor(Math.random() * str.length)];
+
+    let contrasena = '';
+    contrasena += obtenerAleatorio(mayusculas);
+    contrasena += obtenerAleatorio(minusculas);
+    contrasena += obtenerAleatorio(numeros);
+    contrasena += obtenerAleatorio(simbolos);
+
+    const todos = mayusculas + minusculas + numeros + simbolos;
+    while (contrasena.length < 12) {
+        contrasena += obtenerAleatorio(todos);
+    }
+
+    contrasena = contrasena.split('').sort(() => Math.random() - 0.5).join('');
+
+    return contrasena;
+}
+
+
 function obtenerUsuarios() {
     fetch(URL)
-    .then(response => response.json())
-    .then(data => {
-        const nuevosUsuarios = data.map(usuario => {
-            const nombre_ext = usuario.name;
-            const email_ext = usuario.email;
-            const contrasena_ext = usuario.username;
+        .then(response => response.json())
+        .then(data => {
+            const nuevosUsuarios = data.map(usuario => {
+                const nombre_ext = usuario.name;
+                const email_ext = usuario.email;
+                const contrasena_segura = generarContrasenaSegura(); 
 
-            return new Usuario (nombre_ext,email_ext,contrasena_ext);
-        })
-        nuevosUsuarios.forEach(nuevoUsuario => {
-            if (!usuarios.some(u => u.email === nuevoUsuario.email)) {
+                return new Usuario(nombre_ext, email_ext, contrasena_segura);
+            });
+
+            nuevosUsuarios.forEach(nuevoUsuario => {
+                if (!usuarios.some(u => u.email === nuevoUsuario.email)) {
                     usuarios.push(nuevoUsuario);
-            }
-        });
-        localStorage.setItem("usuarios", JSON.stringify(usuarios));
+                }
+            });
 
-    })
+            localStorage.setItem("usuarios", JSON.stringify(usuarios));
+        });
 }
+
 
 obtenerUsuarios();
 
