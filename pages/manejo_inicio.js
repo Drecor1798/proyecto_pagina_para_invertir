@@ -366,112 +366,66 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     datos.onclick = () => {
-    contenido3.innerHTML = `
-        <h3>Editar datos</h3>
-        <label>Nombre actual: ${usuario.nombre}</label><br>
-        <input type="text" id="nuevo_nombre" placeholder="Nuevo nombre"><br>
-        <button class="btn btn-dark my-2" id="cambiar_nombre">Cambiar nombre</button>
-        <hr>
-        <input type="password" id="nueva_contrasena" placeholder="Nueva contraseña"><br>
-        <input type="password" id="confirmar_contrasena" placeholder="Confirmar contraseña"><br>
-        <button class="btn btn-dark my-2" id="cambiar_contrasena">Cambiar contraseña</button>
-        <hr>
-        <button class="btn btn-secondary" id="atras">Atrás</button>
-        <button class="btn btn-danger" id="borrar_datos">Borrar cuenta</button>
-    `;
+        contenido3.innerHTML = `
+            <h3>Editar datos</h3>
+            <label>Nombre actual: ${usuario.nombre}</label><br>
+            <input type="text" id="ne" placeholder="Nuevo nombre" id="posible_nombre"><br><br>
+            <button class="btn btn-dark" id="editar_nombre">Guardar cambios</button>
+            <button class="btn btn-secondary" id="atras">Atrás</button>
+            <button class="btn btn-secondary" id="borrar_datos">Borrar cuenta</button>
+        `;
 
-    // Cambiar solo el nombre
-    document.getElementById("cambiar_nombre").onclick = () => {
-        const nuevoNombre = document.getElementById("nuevo_nombre").value.trim();
-        if (!nuevoNombre) {
-            Swal.fire({
-                icon: "error",
-                title: "El campo está vacío",
-            });
-            return;
-        }
-
-        usuario.nombre = nuevoNombre;
-        actualizarUsuario();
-
-        Swal.fire({
-            icon: "success",
-            title: "Nombre actualizado",
-            showConfirmButton: false,
-            timer: 1500
-        }).then(() => location.reload());
-    };
-
-    document.getElementById("cambiar_contrasena").onclick = () => {
-        const nuevaContrasena = document.getElementById("nueva_contrasena").value.trim();
-        const confirmarContrasena = document.getElementById("confirmar_contrasena").value.trim();
-
-        if (!nuevaContrasena || !confirmarContrasena) {
-            Swal.fire({
-                icon: "error",
-                title: "Complete ambos campos de contraseña",
-            });
-            return;
-        }
-
-        if (nuevaContrasena !== confirmarContrasena) {
-            Swal.fire({
-                icon: "error",
-                title: "Las contraseñas no coinciden",
-            });
-            return;
-        }
-
-        if (!validarContrasenaSegura(nuevaContrasena)) {
-            Swal.fire({
-                icon: "error",
-                title: "Contraseña insegura",
-                text: "Debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo",
-            });
-            return;
-        }
-
-        usuario.password = nuevaContrasena;
-        actualizarUsuario();
-
-        Swal.fire({
-            icon: "success",
-            title: "Contraseña actualizada",
-            showConfirmButton: false,
-            timer: 1500
-        }).then(() => location.reload());
-    };
-
-
-    document.getElementById("atras").onclick = () => location.reload();
-
-    document.getElementById("borrar_datos").onclick = () => {
-        Swal.fire({
-            title: "¿Seguro que deseas borrar tu cuenta?",
-            text: "Esta cuenta se borrará de la página",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Sí, estoy seguro"
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const restantes = usuarios.filter(u => u.email !== usuario.email);
-                localStorage.setItem("usuarios", JSON.stringify(restantes));
-                localStorage.removeItem(`mensajes_log_${usuario.email}`);
-                localStorage.removeItem("usuario_logueado");
+        document.getElementById("editar_nombre").onclick = () => {
+            const nuevoNombre = document.getElementById("ne").value.trim();
+            if (!nuevoNombre){
                 Swal.fire({
-                    title: "Fue borrado",
-                    text: "Su cuenta fue borrada.",
-                    icon: "success"
-                }).then(() => {
-                    location.href = "/index.html";
+                    icon: "error",
+                    title: "El campo esta bacio",
                 });
-            }
-        });
-    };
-};
+                return;
+            };
 
+            usuario.nombre = nuevoNombre;
+            actualizarUsuario();
+
+            Swal.fire({
+                icon: "success",
+                title: "Nombre cambiado",
+                showConfirmButton: false,
+                timer: 1500
+            }).then(() => {
+                location.reload(); 
+            });
+        };
+
+        document.getElementById("borrar_datos").onclick = () => {
+            Swal.fire({
+                title: "¿Seguro que deseas borrar tu cuenta?",
+                text: "Esta cuenta se borrara de la pagina",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Si, estoy seguro"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const restantes = usuarios.filter(u => u.email !== usuario.email);
+                    localStorage.setItem("usuarios", JSON.stringify(restantes));
+                    localStorage.removeItem(`mensajes_log_${usuario.email}`);
+                    localStorage.removeItem("usuario_logueado");
+                    Swal.fire({
+                        title: "Fue borrado",
+                        text: "Su cuenta fue borrada.",
+                        icon: "success"
+                    }).then(() => {
+                        location.href = "/index.html"; 
+                    });
+                }
+            });
+        };
+
+        document.getElementById("atras").onclick = () => location.reload();
+    };
 
     historial.onclick = () => {
         contenido3.innerHTML = `
